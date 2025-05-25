@@ -82,7 +82,21 @@ public class IntList {
 
     public static IntList dcatenate(IntList A, IntList B) {
         //TODO:  fill in method
-        return null;
+
+        // 0 check in case that A is null
+        if (A == null) {
+            return B;
+        }
+
+        // 1 look for the last node
+        IntList p = A;
+        while (p.rest != null) {
+            p = p.rest;
+        }
+
+        // 2 link B
+        p.rest = B;
+        return A;
     }
 
     /**
@@ -91,7 +105,25 @@ public class IntList {
      */
     public static IntList catenate(IntList A, IntList B) {
         //TODO:  fill in method
-        return null;
+
+        // 0 check in case that A is null
+        if (A == null) {
+            return B;
+        }
+
+        // 1 deepcopy A
+        IntList rtn = new IntList(), pa = A, prtn = rtn;
+        while (pa.rest != null) {
+            prtn.first = pa.first;
+            prtn.rest = new IntList();
+            pa = pa.rest;
+            prtn = prtn.rest;
+        }
+        prtn.first = pa.first;
+
+        // 2 link b
+        prtn.rest = B;
+        return rtn;
     }
 
 
