@@ -1,23 +1,22 @@
-public class ArrayDeque<type> {
+public class ArrayDeque<T> {
     /** point to the next position to set */
     private int head, tail;
 
-    private type[] items;
+    private T[] items;
 
     /** initializes an empty ArrayDeque */
     public ArrayDeque() {
-        tail = 0;
-        head = 1;
-        items = (type[]) new Object[8];
+        head = 0;
+        tail = 1;
+        items = (T[]) new Object[8];
     }
 
     /** Returns the number of items in the deque */
     public int size() {
-        if (head > tail) {
-            return head - tail - 1;
-        }
-        else {
-            return head + items.length - tail - 1;
+        if (tail > head) {
+            return tail - head - 1;
+        } else {
+            return tail + items.length - head - 1;
         }
     }
 
@@ -27,29 +26,28 @@ public class ArrayDeque<type> {
     }
 
     /** Returns true if deque is full, false otherwise */
-    public boolean isFull() {
+    private boolean isFull() {
         return size() == items.length - 1;
     }
 
     /** double items.length */
     private void increase() {
         int length = items.length;
-        type[] new_items = (type[]) new Object[2 * length];
+        T[] newItems = (T[]) new Object[2 * length];
         int size = size();
-        if (head > tail) {
-            System.arraycopy(items, tail + 1, new_items, 1, size);
+        if (tail > head) {
+            System.arraycopy(items, head + 1, newItems, 1, size);
+        } else {
+            System.arraycopy(items, head + 1, newItems, 1, length - head - 1);
+            System.arraycopy(items, 0, newItems, length - head, tail);
         }
-        else {
-            System.arraycopy(items, tail + 1, new_items, 1, length - tail - 1);
-            System.arraycopy(items, 0, new_items, length - tail, head);
-        }
-        head = size + 1;
-        tail = 0;
-        items = new_items;
+        tail = size + 1;
+        head = 0;
+        items = newItems;
     }
 
-    /** Adds an item of type T to the front of the deque */
-    public void addFirst(type item) {
+    /** Adds an item of T to the front of the deque */
+    public void addFirst(T item) {
         // checks in case that the Array is full
         if (isFull()) {
             increase();
@@ -63,8 +61,8 @@ public class ArrayDeque<type> {
         }
     }
 
-    /** Adds an item of type T to the back of the deque */
-    public void addLast(type item) {
+    /** Adds an item of T to the back of the deque */
+    public void addLast(T item) {
         // checks in case that the Array is full
         if (isFull()) {
             increase();
@@ -89,8 +87,7 @@ public class ArrayDeque<type> {
             for (; i > head; i--) {
                 System.out.print(" " + items[i]);
             }
-        }
-        else {
+        } else {
             if (0 == tail) {
                 int i = items.length - 1;
                 if (i > head) {
@@ -100,8 +97,7 @@ public class ArrayDeque<type> {
                 for (; i > head; i--) {
                     System.out.print(" " + items[i]);
                 }
-            }
-            else {
+            } else {
                 int i = tail - 1;
                 if (i >= 0) {
                     System.out.print(items[i]);
@@ -120,14 +116,14 @@ public class ArrayDeque<type> {
     /** Removes and returns the item at the front of the deque. If no such item exists, returns null
      *  the position will be set to null
      */
-    public type removeFirst() {
+    public T removeFirst() {
         // checks in case that the ArrayDeque is empty
         if (isEmpty()) {
             return null;
         }
 
         tail = (tail - 1 + items.length) % items.length;
-        type rtn = items[tail];
+        T rtn = items[tail];
         items[tail] = null;
         return rtn;
     }
@@ -135,14 +131,14 @@ public class ArrayDeque<type> {
     /** Removes and returns the item at the back of the deque. If no such item exists, returns null
      *  the position will be set to null
      */
-    public type removeLast() {
+    public T removeLast() {
         // checks in case that the ArrayDeque is empty
         if (isEmpty()) {
             return null;
         }
 
         head = (head + 1) % items.length;
-        type rtn = items[head];
+        T rtn = items[head];
         items[head] = null;
         return rtn;
     }
@@ -151,9 +147,9 @@ public class ArrayDeque<type> {
      *  If no such item exists, returns null
      *  Must not alter the deque
      */
-    public type get(int index) {
+    public T get(int index) {
         // check in case that no such item exists
-        if (size() - 1 < index) {
+        if (size() <= index) {
             return null;
         }
 

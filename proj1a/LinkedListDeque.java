@@ -1,4 +1,4 @@
-public class LinkedListDeque<type> {
+public class LinkedListDeque<T> {
     /** should be modified the instant add or remove happens */
     private int size;
     private LinkedListNode setinal;
@@ -7,11 +7,11 @@ public class LinkedListDeque<type> {
      *  a DLList
      */
     private class LinkedListNode {
-        type item;
+        T item;
         LinkedListNode last, next;
 
         /** initializes a LinkedListNode with a given item */
-        public LinkedListNode(type item) {
+        public LinkedListNode(T item) {
             this.item = item;
         }
 
@@ -28,11 +28,10 @@ public class LinkedListDeque<type> {
             last.next = this;
         }
 
-        public type getRecursive(int index) {
+        public T getRecursive(int index) {
             if (0 == index) {
                 return item;
-            }
-            else {
+            } else {
                 return next.getRecursive(index - 1);
             }
         }
@@ -46,16 +45,16 @@ public class LinkedListDeque<type> {
     }
 
     /** adds item to the front of the LinkedListDeque */
-    public void addFirst(type item) {
-        LinkedListNode new_node = new LinkedListNode(item);
-        new_node.addbetween(setinal, setinal.next);
+    public void addFirst(T item) {
+        LinkedListNode newNode = new LinkedListNode(item);
+        newNode.addbetween(setinal, setinal.next);
         size++;
     }
 
     /** adds item to the rear of the LinkedListDeque */
-    public void addLast(type item) {
-        LinkedListNode new_node = new LinkedListNode(item);
-        new_node.addbetween(setinal.last, setinal);
+    public void addLast(T item) {
+        LinkedListNode newNode = new LinkedListNode(item);
+        newNode.addbetween(setinal.last, setinal);
         size++;
     }
 
@@ -74,8 +73,7 @@ public class LinkedListDeque<type> {
         LinkedListNode p = setinal.next;
         if (p == setinal) {
             return;
-        }
-        else {
+        } else {
             System.out.print(p.item);
             p = p.next;
         }
@@ -87,29 +85,27 @@ public class LinkedListDeque<type> {
     /** removes and returns the first item
      *  if isEmpty(), return null
      */
-    public type removeFirst() {
+    public T removeFirst() {
         if (size != 0) {
-            type rtn = setinal.next.item;
+            T rtn = setinal.next.item;
             setinal.next = setinal.next.next;
             setinal.next.last = setinal;
             size--;
             return rtn;
-        }
-        else {
+        } else {
             return null;
         }
     }
 
     /** removes and returns the last item */
-    public type removeLast() {
+    public T removeLast() {
         if (size != 0) {
-            type rtn = setinal.next.item;
+            T rtn = setinal.last.item;
             setinal.last = setinal.last.last;
             setinal.last.next = setinal;
             size--;
             return rtn;
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -119,9 +115,9 @@ public class LinkedListDeque<type> {
      *  may not alter the LinkedListDeque
      *  uses iteration
      */
-    public type get(int index) {
+    public T get(int index) {
         // check in case the required item doesn't exist
-        if (size <= index + 1) {
+        if (size <= index) {
             return null;
         }
 
@@ -137,9 +133,9 @@ public class LinkedListDeque<type> {
      *  may not alter the LinkedListDeque
      *  uses recursion
      */
-    public type getRecursive(int index) {
+    public T getRecursive(int index) {
         // check in case the required item doesn't exist
-        if (size <= index + 1) {
+        if (size <= index) {
             return null;
         }
 
