@@ -46,6 +46,22 @@ public class ArrayDeque<T> {
         items = newItems;
     }
 
+    /** reduce item.length by half */
+    private void decrease() {
+        int length = items.length;
+        T[] newItems = (T[]) new Object[length / 2];
+        int size = size();
+        if (tail > head) {
+            System.arraycopy(items, head + 1, newItems, 1, size);
+        } else {
+            System.arraycopy(items, head + 1, newItems, 1, length - head - 1);
+            System.arraycopy(items, 0, newItems, length - head, tail);
+        }
+        tail = size + 1;
+        head = 0;
+        items = newItems;
+    }
+
     /** Adds an item of T to the front of the deque */
     public void addFirst(T item) {
         // checks in case that the Array is full
@@ -122,9 +138,13 @@ public class ArrayDeque<T> {
             return null;
         }
 
-        tail = (tail - 1 + items.length) % items.length;
+        int length = items.length;
+        tail = (tail - 1 + length) % length;
         T rtn = items[tail];
         items[tail] = null;
+        if (3 * size() < length && size() > 8) {
+            decrease();
+        }
         return rtn;
     }
 

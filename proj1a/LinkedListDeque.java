@@ -21,13 +21,14 @@ public class LinkedListDeque<T> {
         }
 
         /** adds node between last and next */
-        public void addbetween(LinkedListNode last, LinkedListNode next) {
-            this.last = last;
-            this.next = next;
-            next.last = this;
-            last.next = this;
+        public void addBetween(LinkedListNode lastNode, LinkedListNode nextNode) {
+            last = lastNode;
+            next = nextNode;
+            nextNode.last = this;
+            lastNode.next = this;
         }
 
+        /** helper function for LinkedListDeque.getRecursive() */
         public T getRecursive(int index) {
             if (0 == index) {
                 return item;
@@ -47,14 +48,14 @@ public class LinkedListDeque<T> {
     /** adds item to the front of the LinkedListDeque */
     public void addFirst(T item) {
         LinkedListNode newNode = new LinkedListNode(item);
-        newNode.addbetween(setinal, setinal.next);
+        newNode.addBetween(setinal, setinal.next);
         size++;
     }
 
     /** adds item to the rear of the LinkedListDeque */
     public void addLast(T item) {
         LinkedListNode newNode = new LinkedListNode(item);
-        newNode.addbetween(setinal.last, setinal);
+        newNode.addBetween(setinal.last, setinal);
         size++;
     }
 
