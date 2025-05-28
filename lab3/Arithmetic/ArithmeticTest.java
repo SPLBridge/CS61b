@@ -1,5 +1,16 @@
 import static org.junit.Assert.*;
+/* import everything in org.junit.Assert.
+ *  This allows us to use the "assertEquals" method
+ *  without needing to use somthing like
+ *  "org.junit.Assert.assertArrayEquals"
+ */
 import org.junit.Test;
+/*  import org.junit.Test.
+ *  this allows us to use the "@Test" annotation
+ *  to mark methods as tests
+ *  instead of needing to use
+ *  "@org.junit.Test"
+ */
 
 public class ArithmeticTest {
 
