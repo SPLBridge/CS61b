@@ -35,10 +35,17 @@ public class TestOffByOne {
         boolean gotten4 = offByOne.equalChars(c41, c42);
         boolean expected4 = false;
 
+        // test 5 upper case
+        char c51 = 'A';
+        char c52 = 'b';
+        boolean gotten5 = offByOne.equalChars(c51, c52);
+        boolean expected5 = false;
+
         // perform tests
         assertEquals(expected1, gotten1);
         assertEquals(expected2, gotten2);
         assertEquals(expected3, gotten3);
         assertEquals(expected4, gotten4);
+        assertEquals(expected5, gotten5);
     }
 }
