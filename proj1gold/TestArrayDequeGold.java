@@ -35,14 +35,14 @@ public class TestArrayDequeGold {
                     for (int j = 0; j < nestTestCounts; j++) {
                         Integer studentInt = studentArray.removeFirst();
                         Integer arrayInt = array.removeFirst();
-                        msg.append("removeFirst() " + studentInt + "\n");
+                        msg.append("removeFirst(): " + studentInt + "\n");
                         assertEquals(msg.toString(), arrayInt, studentInt);
                     }
                 } else {
                     for (int j = 0; j < nestTestCounts; j++) {
                         Integer studentInt = studentArray.removeLast();
                         Integer arrayInt = array.removeLast();
-                        msg.append("removeLast() " + studentInt + "\n");
+                        msg.append("removeLast(): " + studentInt + "\n");
                         assertEquals(msg.toString(), arrayInt, studentInt);
                     }
                 }
