@@ -12,13 +12,14 @@ import java.util.Set;
 public class MyHashMap<K, V> implements Map61B<K, V> {
 
     private static final int DEFAULT_SIZE = 16;
+    private static final int RESIZE_FACTOR = 2;
     private static final double MAX_LF = 0.75;
 
     private ArrayMap<K, V>[] buckets;
     private int size;
 
-    private int loadFactor() {
-        return size / buckets.length;
+    private double loadFactor() {
+        return (double) size / buckets.length;
     }
 
     public MyHashMap() {
@@ -53,19 +54,51 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public V get(K key) {
-        throw new UnsupportedOperationException();
+        int hashcode = hash(key);
+        ArrayMap<K, V> arrayMap= buckets[hashcode];
+        return arrayMap.get(key);
+    }
+
+    private void resizeIfNecessary() {
+        if (loadFactor() > MAX_LF) {
+            resize();
+        }
+    }
+
+    private void putWithoutResizing(K key, V value) {
+        int hashcode = hash(key);
+        ArrayMap<K, V> arrayMap = buckets[hashcode];
+        if (!arrayMap.containsKey(key)) {
+            size++;
+        }
+        arrayMap.put(key,value);
+    }
+
+    private void resize() {
+        ArrayMap<K, V>[] oldBuckets = buckets;
+        buckets = new ArrayMap[buckets.length * RESIZE_FACTOR];
+        clear();
+        for (ArrayMap bucket : oldBuckets) {
+            Iterator iterator = bucket.iterator();
+            while (iterator.hasNext()) {
+                K key = (K) iterator.next();
+                V value = (V) bucket.get(key);
+                putWithoutResizing(key, value);
+            }
+        }
     }
 
     /* Associates the specified value with the specified key in this map. */
     @Override
     public void put(K key, V value) {
-        throw new UnsupportedOperationException();
+        putWithoutResizing(key, value);
+        resizeIfNecessary();
     }
 
     /* Returns the number of key-value mappings in this map. */
     @Override
     public int size() {
-        throw new UnsupportedOperationException();
+        return size;
     }
 
     //////////////// EVERYTHING BELOW THIS LINE IS OPTIONAL ////////////////
