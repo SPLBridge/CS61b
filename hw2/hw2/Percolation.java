@@ -6,23 +6,13 @@ public class Percolation {
     private class Grid {
         private class Site {
             private boolean isOpen;
-            private int num;
 
             Site() {
                 isOpen = false;
             }
 
-            Site(int number) {
-                isOpen = false;
-                num = number;
-            }
-
             boolean isOpen() {
                 return isOpen;
-            }
-
-            int num() {
-                return num;
             }
 
             void set(boolean condition) {
@@ -38,8 +28,7 @@ public class Percolation {
             sites = new Site[N][N];
             for (int i = 0; i < N; i++) {
                 for (int j = 0; j < N; j++) {
-                    int num = positionToNum(i, j);
-                    sites[i][j] = new Site(num);
+                    sites[i][j] = new Site();
                 }
             }
             selector = new WeightedQuickUnionUF(N * N);
@@ -57,18 +46,6 @@ public class Percolation {
         boolean isOpen(int x, int y) {
             return sites[x][y].isOpen();
         }
-
-        boolean connected(int x1, int y1, int x2, int y2) {
-            int num1 = positionToNum(x1, y1);
-            int num2 = positionToNum(x2, y2);
-            return selector.connected(num1, num2);
-        }
-
-        void union(int x1, int y1, int x2, int y2) {
-            int num1 = positionToNum(x1, y1);
-            int num2 = positionToNum(x2, y2);
-            selector.union(num1, num2);
-        }
     }
 
     private Grid grid;
@@ -78,6 +55,10 @@ public class Percolation {
     private int openSites;
     private int[] bottomSitesY;
     private int bottomSitesYpointer;
+    private WeightedQuickUnionUF ufPercolates;
+    private WeightedQuickUnionUF ufFull;
+    private int virtualTop;
+    private int virtualBottom;
 
     /** create N-by-N grid, with all sites initially blocked */
     public Percolation(int N) {
@@ -86,27 +67,24 @@ public class Percolation {
         }
         sideLength = N;
         grid = new Grid(N);
-        fullSitesY = new int[N];
-        fullSitesYPointer = 0;
         openSites = 0;
-        bottomSitesY = new int[N];
-        fullSitesYPointer = 0;
+        int totalSites = N * N;
+        virtualTop = totalSites;
+        virtualBottom = totalSites + 1;
+        ufPercolates = new WeightedQuickUnionUF(totalSites + 2); // +2 for virtual top/bottom
+        ufFull = new WeightedQuickUnionUF(totalSites + 1); // +1 for virtual top only
     }
 
-    void addFullSite(int y) {
-        fullSitesY[fullSitesYPointer] = y;
-        fullSitesYPointer++;
-    }
-
-    void addBottomSite(int y) {
-        bottomSitesY[bottomSitesYpointer] = y;
-        bottomSitesYpointer++;
+    // Helper to convert (row, col) to 1D index
+    private int xyTo1D(int row, int col) {
+        return row * sideLength + col;
     }
 
     /** open the site (row, col) if it is not open already */
     public void open(int row, int col) {
         if (row < 0 || row > sideLength - 1 || col < 0 || col > sideLength) {
-            throw new java.lang.IndexOutOfBoundsException("both row and col are supposed to be in [0, sideLength)");
+            throw new java.lang.IndexOutOfBoundsException(
+                    "both row and col are supposed to be in [0, sideLength)");
         }
 
         if (isOpen(row, col)) {
@@ -115,24 +93,24 @@ public class Percolation {
 
         openSites++;
         grid.set(true, row, col);
+        int idx = xyTo1D(row, col);
 
         if (row == 0) {
-            addFullSite(col);
+            ufPercolates.union(idx, virtualTop);
+            ufFull.union(idx, virtualTop);
         }
         if (row == sideLength - 1) {
-            addBottomSite(col);
+            ufPercolates.union(idx, virtualBottom);
         }
-        if (row - 1 >= 0 && isOpen(row - 1, col)) {
-            grid.union(row, col, row - 1, col);
-        }
-        if (row + 1 < sideLength && isOpen(row + 1, col)) {
-            grid.union(row, col, row + 1, col);
-        }
-        if (col - 1 >= 0 && isOpen(row, col - 1)) {
-            grid.union(row, col, row, col - 1);
-        }
-        if (col + 1 < sideLength && isOpen(row, col + 1)) {
-            grid.union(row, col, row, col + 1);
+        // Connect to open neighbors in both structures
+        int[][] dirs = {{-1,0},{1,0},{0,-1},{0,1}};
+        for (int[] d : dirs) {
+            int nr = row + d[0], nc = col + d[1];
+            if (nr >= 0 && nr < sideLength && nc >= 0 && nc < sideLength && isOpen(nr, nc)) {
+                int nIdx = xyTo1D(nr, nc);
+                ufPercolates.union(idx, nIdx);
+                ufFull.union(idx, nIdx);
+            }
         }
     }
 
@@ -143,12 +121,8 @@ public class Percolation {
 
     /** is the site (row, col) full? */
     public boolean isFull(int row, int col) {
-        for (int i = 0; i < fullSitesYPointer; i++) {
-            if (grid.connected(0, fullSitesY[i], row, col)) {
-                return true;
-            }
-        }
-        return false;
+        int idx = xyTo1D(row, col);
+        return isOpen(row, col) && ufFull.connected(idx, virtualTop);
     }
 
     /** number of open sites */
@@ -158,11 +132,10 @@ public class Percolation {
 
     /** does the system percolate? */
     public boolean percolates() {
-        for (int i = 0; i < bottomSitesYpointer; i++) {
-            if (isFull(sideLength - 1, bottomSitesY[i])) {
-                return true;
-            }
-        }
-        return false;
+        return ufPercolates.connected(virtualTop, virtualBottom);
+    }
+
+    public static void main(String[] args) {
+
     }
 }
