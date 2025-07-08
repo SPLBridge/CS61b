@@ -55,7 +55,7 @@ public class Solver {
 
         @Override
         public WorldState next() {
-             return states[pointer++];
+            return states[pointer++];
         }
     }
 
