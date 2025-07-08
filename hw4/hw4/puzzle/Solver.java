@@ -2,7 +2,6 @@ package hw4.puzzle;
 
 import edu.princeton.cs.algs4.MinPQ;
 
-import java.util.Comparator;
 import java.util.Iterator;
 
 public class Solver {
@@ -10,7 +9,7 @@ public class Solver {
     private Node solution;
 
     public Solver(WorldState initial) {
-        minPQ = new MinPQ<>(new comparator());
+        minPQ = new MinPQ<>(new Comparator());
         Node initialNode = new Node(initial, 0, null, 0);
         minPQ.insert(initialNode);
         while (true) {
@@ -21,8 +20,7 @@ public class Solver {
             }
             Iterable<WorldState> neighbors = node.worldState().neighbors();
             for (WorldState neighbor : neighbors) {
-                if (node.previous() == null || !neighbor.equals(node.previous().worldState()))
-                {
+                if (node.previous() == null || !neighbor.equals(node.previous().worldState())) {
                     Node newNode = new Node(neighbor, node.movesMade + 1, node,
                             neighbor.estimatedDistanceToGoal());
                     minPQ.insert(newNode);
@@ -35,11 +33,11 @@ public class Solver {
         return solution.movesMade();
     }
 
-    private class iterator implements Iterator<WorldState> {
+    private class SolverIterator implements Iterator<WorldState> {
         private WorldState[] states;
         private int pointer;
 
-        public iterator() {
+        public SolverIterator() {
             states = new WorldState[moves() + 1];
             pointer = moves();
             Node currentNode = solution;
@@ -61,16 +59,16 @@ public class Solver {
         }
     }
 
-    private class solution implements Iterable<WorldState> {
+    private class Solution implements Iterable<WorldState> {
 
         @Override
         public Iterator<WorldState> iterator() {
-            return new iterator();
+            return new SolverIterator();
         }
     }
 
     public Iterable<WorldState> solution() {
-        return new solution();
+        return new Solution();
     }
 
     private class Node {
@@ -103,7 +101,7 @@ public class Solver {
         }
     }
 
-    private class comparator implements Comparator<Node> {
+    private class Comparator implements java.util.Comparator<Node> {
 
         @Override
         public int compare(Node o1, Node o2) {

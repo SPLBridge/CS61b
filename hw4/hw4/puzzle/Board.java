@@ -5,7 +5,7 @@ import java.util.List;
 
 import static java.lang.Math.abs;
 
-public class Board implements WorldState{
+public class Board implements WorldState {
     private int[][] board;
 
     public Board(int[][] tiles) {
@@ -62,7 +62,7 @@ public class Board implements WorldState{
                     continue; // Skip the empty tile
                 }
                 int[] position = numToPosition(tileAt(i, j));
-                rtn += abs(position[0] -i) + abs(position[1] - j);
+                rtn += abs(position[0] - i) + abs(position[1] - j);
             }
         }
         return rtn;
@@ -81,6 +81,17 @@ public class Board implements WorldState{
             }
         }
         return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        for (int i = 0; i < size(); i++) {
+            for (int j = 0; j < size(); j++) {
+                hash = 31 * hash + tileAt(i, j);
+            }
+        }
+        return hash;
     }
 
     @Override
@@ -131,7 +142,7 @@ public class Board implements WorldState{
         s.append(N + "\n");
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
-                s.append(String.format("%2d ", tileAt(i,j)));
+                s.append(String.format("%2d ", tileAt(i, j)));
             }
             s.append("\n");
         }
