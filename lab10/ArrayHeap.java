@@ -27,24 +27,21 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
      * Returns the index of the node to the left of the node at i.
      */
     private static int leftIndex(int i) {
-        /* TODO: Your code here! */
-        return 0;
+        return 2 * i;
     }
 
     /**
      * Returns the index of the node to the right of the node at i.
      */
     private static int rightIndex(int i) {
-        /* TODO: Your code here! */
-        return 0;
+        return 2 * i + 1;
     }
 
     /**
      * Returns the index of the node that is the parent of the node at i.
      */
     private static int parentIndex(int i) {
-        /* TODO: Your code here! */
-        return 0;
+        return i / 2;
     }
 
     /**
@@ -107,8 +104,20 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         // Throws an exception if index is invalid. DON'T CHANGE THIS LINE.
         validateSinkSwimArg(index);
 
-        /** TODO: Your code here. */
-        return;
+        int parentIndex = parentIndex(index);
+        while (inBounds(parentIndex)) {
+            // If the node's priority is greater than or equal to its parent's,
+            // we are done swimming.
+            if (min(index, parentIndex) == parentIndex) {
+                break;
+            }
+            // Swap the node with its parent.
+            swap(index, parentIndex);
+            // Update the index to the parent's index.
+            index = parentIndex;
+            // Get the new parent.
+            parentIndex = parentIndex(index);
+        }
     }
 
     /**
@@ -118,8 +127,34 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         // Throws an exception if index is invalid. DON'T CHANGE THIS LINE.
         validateSinkSwimArg(index);
 
-        /** TODO: Your code here. */
-        return;
+        int leftIndex = leftIndex(index);
+        int rightIndex = rightIndex(index);
+        while (inBounds(leftIndex) && inBounds(rightIndex)) {
+            // If the node's priority is less than or equal to both children,
+            // we are done sinking.
+            if (min(index, leftIndex) == index && min(index, rightIndex) == index) {
+                break;
+            }
+            // Find the index of the child with the smaller priority.
+            int minIndex = min(leftIndex, rightIndex);
+            // Swap the node with that child.
+            swap(index, minIndex);
+            // Update the index to the child's index.
+            index = minIndex;
+            // Get the new left and right children.
+            leftIndex = leftIndex(index);
+            rightIndex = rightIndex(index);
+        }
+        if (inBounds(leftIndex)) {
+            // If we only have a left child, we need to check it.
+            if (min(index, leftIndex) == leftIndex) {
+                swap(index, leftIndex);
+            }
+        }
+    }
+
+    private int nextPointer() {
+        return size + 1;
     }
 
     /**
@@ -133,7 +168,9 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
             resize(contents.length * 2);
         }
 
-        /* TODO: Your code here! */
+        contents[nextPointer()] = new Node(item, priority);
+        size++;
+        swim(size);
     }
 
     /**
@@ -142,8 +179,7 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
      */
     @Override
     public T peek() {
-        /* TODO: Your code here! */
-        return null;
+        return contents[1].item();
     }
 
     /**
@@ -157,8 +193,17 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
      */
     @Override
     public T removeMin() {
-        /* TODO: Your code here! */
-        return null;
+        if (size == 0) {
+            return null;
+        }
+        T rtn = peek();
+        swap(1, nextPointer() - 1);
+        contents[nextPointer() - 1] = null; // Null out the dead item.
+        size--;
+        if (size > 0) {
+            sink(1);
+        }
+        return rtn;
     }
 
     /**
@@ -180,8 +225,20 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
      */
     @Override
     public void changePriority(T item, double priority) {
-        /* TODO: Your code here! */
-        return;
+        int index = 1;
+        while (index < nextPointer()) {
+            Node node = contents[index];
+            if (item.equals(node.item())) {
+                break;
+            }
+        }
+        double oldPriority = contents[index].priority();
+        contents[index] = new Node(item, priority);
+        if (priority < oldPriority) {
+            swim(index);
+        } else if (priority > oldPriority) {
+            sink(index);
+        }
     }
 
     /**
