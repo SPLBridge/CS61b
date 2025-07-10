@@ -103,7 +103,7 @@ public class Percolation {
             ufPercolates.union(idx, virtualBottom);
         }
         // Connect to open neighbors in both structures
-        int[][] dirs = {{-1,0},{1,0},{0,-1},{0,1}};
+        int[][] dirs = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
         for (int[] d : dirs) {
             int nr = row + d[0], nc = col + d[1];
             if (nr >= 0 && nr < sideLength && nc >= 0 && nc < sideLength && isOpen(nr, nc)) {
