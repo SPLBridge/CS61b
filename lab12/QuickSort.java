@@ -48,12 +48,53 @@ public class QuickSort {
             Queue<Item> unsorted, Item pivot,
             Queue<Item> less, Queue<Item> equal, Queue<Item> greater) {
         // Your code here!
+        for (Item item : unsorted) {
+            if (item.compareTo(pivot) < 0) {
+                less.enqueue(item);
+            } else if (item.compareTo(pivot) == 0) {
+                equal.enqueue(item);
+            } else {
+                greater.enqueue(item);
+            }
+        }
     }
 
     /** Returns a Queue that contains the given items sorted from least to greatest. */
     public static <Item extends Comparable> Queue<Item> quickSort(
             Queue<Item> items) {
         // Your code here!
-        return items;
+        if (items.size() <= 1) {
+            return items; // Base case: a queue with 0 or 1 item is already sorted.
+        }
+        Item pivot = getRandomItem(items);
+        Queue<Item> less = new Queue<>();
+        Queue<Item> equal = new Queue<>();
+        Queue<Item> greater = new Queue<>();
+        partition(items, pivot, less, equal, greater);
+        // Recursively sort the less and greater queues.
+        Queue<Item> sortedLess = quickSort(less);
+        Queue<Item> sortedGreater = quickSort(greater);
+        // Concatenate the sorted less queue, equal queue, and sorted greater queue.
+        Queue<Item> sortedItems = catenate(sortedLess, equal);
+        sortedItems = catenate(sortedItems, sortedGreater);
+        return sortedItems;
+    }
+
+    public static void main(String[] args) {
+        Queue<Integer> items = new Queue<>();
+        items.enqueue(3);
+        items.enqueue(1);
+        items.enqueue(4);
+        items.enqueue(1);
+        items.enqueue(5);
+        items.enqueue(9);
+        items.enqueue(2);
+        items.enqueue(6);
+        items.enqueue(5);
+        items.enqueue(3);
+        items.enqueue(5);
+        System.out.println(items.toString());
+        Queue<Integer> sortedItems = QuickSort.quickSort(items);
+        System.out.println(sortedItems.toString());
     }
 }
